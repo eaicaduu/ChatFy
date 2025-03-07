@@ -1,26 +1,51 @@
 import 'package:flutter/material.dart';
+import '../database/database.dart';
 
-class ConversaScreen extends StatefulWidget {
+
+class ChatScreen extends StatefulWidget {
   final String nome;
-  final String avatar;
+  final String photo;
 
-  const ConversaScreen({super.key, required this.nome, required this.avatar});
+  const ChatScreen({super.key, required this.nome, required this.photo});
 
   @override
-  _ConversaScreenState createState() => _ConversaScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ConversaScreenState extends State<ConversaScreen> {
+class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<String> _mensagens = [];
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  void _enviarMensagem() {
+  @override
+  void initState() {
+    super.initState();
+    _carregarMensagens();
+  }
+
+  Future<void> _carregarMensagens() async {
+    List<Map<String, dynamic>> mensagens = await _dbHelper.getMessage();
+    setState(() {
+      _mensagens.clear();
+      _mensagens.addAll(mensagens.map((msg) => msg["text"].toString()));
+    });
+  }
+
+  Future<void> _enviarMensagem() async {
     if (_controller.text.isNotEmpty) {
+      await _dbHelper.saveMessage(_controller.text);
       setState(() {
-        _mensagens.add(_controller.text);
+        _mensagens.insert(0, _controller.text);
       });
       _controller.clear();
     }
+  }
+
+  Future<void> _deletarMensagens() async {
+    await _dbHelper.deleteMessage();
+    setState(() {
+      _mensagens.clear();
+    });
   }
 
   @override
@@ -29,11 +54,17 @@ class _ConversaScreenState extends State<ConversaScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            CircleAvatar(backgroundImage: NetworkImage(widget.avatar)),
+            CircleAvatar(backgroundImage: NetworkImage(widget.photo)),
             SizedBox(width: 10),
             Text(widget.nome),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _deletarMensagens,
+          ),
+        ],
       ),
       body: Column(
         children: [

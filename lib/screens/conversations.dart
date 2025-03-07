@@ -1,49 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:chat/screens/chat.dart';
+import 'chat.dart';
+import 'contacts.dart';
+import '../database/database.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class ConversationsScreen extends StatefulWidget {
+  const ConversationsScreen({super.key});
 
   @override
-  ChatScreenState createState() => ChatScreenState();
+  ChatListScreenState createState() => ChatListScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class ChatListScreenState extends State<ConversationsScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, String>> _filteredChats = [];
-
-  final List<Map<String, String>> _chats = [
-    {
-      "name": "Lucas",
-      "message": "E aí, beleza?",
-      "time": "15:30",
-      "avatar": "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-      "name": "Mariana",
-      "message": "Já viu as novidades?",
-      "time": "14:15",
-      "avatar": "https://randomuser.me/api/portraits/women/2.jpg",
-    },
-    {
-      "name": "Pedro",
-      "message": "Te chamo mais tarde!",
-      "time": "13:00",
-      "avatar": "https://randomuser.me/api/portraits/men/3.jpg",
-    },
-  ];
+  List<Map<String, dynamic>> _filteredChats = [];
+  List<Map<String, dynamic>> _chats = [];
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   void initState() {
     super.initState();
-    _filteredChats = _chats;
+    _loadMessages();
+  }
+
+  Future<void> _loadMessages() async {
+    List<Map<String, dynamic>> messages = await _dbHelper.getMessage();
+    setState(() {
+      _chats = messages;
+      _filteredChats = messages;
+    });
   }
 
   void _startSearch() {
     setState(() {
       _isSearching = true;
-      _filteredChats = _chats;
     });
   }
 
@@ -51,16 +41,23 @@ class ChatScreenState extends State<ChatScreen> {
     setState(() {
       _isSearching = false;
       _searchController.clear();
-      _filteredChats = _chats;
+      _filteredChats = List.from(_chats);
     });
   }
 
   void _filterChats(String query) {
     setState(() {
       _filteredChats = _chats
-          .where((chat) => chat["name"]!.toLowerCase().contains(query.toLowerCase()))
+          .where((chat) => chat["text"].toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
+  }
+
+  void _openContactsScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ContactsScreen()),
+    );
   }
 
   @override
@@ -81,33 +78,34 @@ class ChatScreenState extends State<ChatScreen> {
         )
             : Text("Conversas"),
         actions: [
-          _isSearching
-              ? IconButton(
-            icon: Icon(Icons.close),
-            onPressed: _stopSearch,
-          )
-              : IconButton(
-            icon: Icon(Icons.search),
-            onPressed: _startSearch,
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: _isSearching ? _stopSearch : _startSearch,
+          ),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _openContactsScreen,
           ),
         ],
       ),
-      body: ListView.builder(
+      body: _filteredChats.isEmpty
+          ? Center(
+        child: Text(
+          "Sem conversas",
+          style: TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      )
+          : ListView.builder(
         itemCount: _filteredChats.length,
         itemBuilder: (context, index) {
           final chat = _filteredChats[index];
           return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(chat["avatar"]!),
-            ),
-            title: Text(chat["name"]!, style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(chat["message"]!),
-            trailing: Text(chat["time"]!, style: TextStyle(color: Colors.grey)),
+            title: Text(chat["text"], style: TextStyle(fontWeight: FontWeight.bold)),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ConversaScreen(nome: chat["name"]!, avatar: chat["avatar"]!),
+                  builder: (context) => ChatScreen(nome: '', photo: '',),
                 ),
               );
             },
