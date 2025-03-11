@@ -1,8 +1,10 @@
-import 'package:chat/screens/conversations.dart';
-import 'package:chat/screens/config.dart';
-import 'package:chat/screens/profile.dart';
-import 'package:chat/screens/status.dart';
+import 'package:chat/screens/conversations/conversations.dart';
+import 'package:chat/screens/config/config.dart';
+import 'package:chat/screens/profile/profile.dart';
+import 'package:chat/screens/status/status.dart';
 import 'package:flutter/material.dart';
+
+import '../values/colors.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -15,7 +17,7 @@ class MenuScreenState extends State<MenuScreen> {
   int _selectedIndex = 2;
 
   final List<Widget> _screens = [
-    Config(),
+    ConfigScreen(),
     Status(),
     Chat(),
     Profile(),
@@ -36,6 +38,8 @@ class MenuScreenState extends State<MenuScreen> {
         onTap: _onItemTapped,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
+        backgroundColor: getBackgroundColor(context),
+        iconSize: 30,
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Configuração"),
@@ -63,15 +67,6 @@ class Status extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatusScreen();
-  }
-}
-
-class Config extends StatelessWidget {
-  const Config({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ConfigScreen();
   }
 }
 

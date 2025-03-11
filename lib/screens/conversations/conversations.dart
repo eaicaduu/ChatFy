@@ -1,7 +1,8 @@
+import 'package:chat/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'contacts.dart';
-import '../database/database.dart';
+import '../../database/database.dart';
 
 class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
@@ -54,9 +55,17 @@ class ChatListScreenState extends State<ConversationsScreen> {
   }
 
   void _openContactsScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ContactsScreen()),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        margin: const EdgeInsets.only(top: 16.0),
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: ContactsScreen(),
+      )
     );
   }
 
@@ -64,6 +73,7 @@ class ChatListScreenState extends State<ConversationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: getBackgroundColor(context),
         title: _isSearching
             ? TextField(
           controller: _searchController,

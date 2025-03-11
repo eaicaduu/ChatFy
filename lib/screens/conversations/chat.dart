@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../database/database.dart';
+import '../../database/database.dart';
 
 
 class ChatScreen extends StatefulWidget {
