@@ -16,7 +16,7 @@ class ContactsScreen extends StatelessWidget {
               padding: EdgeInsets.only(left: 16.0),
               child: Text(
                 "Contatos",
-                style: TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 22),
               ),
             ),
             Padding(
@@ -31,7 +31,6 @@ class ContactsScreen extends StatelessWidget {
             ),
           ],
         ),
-        const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -40,7 +39,7 @@ class ContactsScreen extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.button,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
                 ),
                 child: Row(
                   children: [
@@ -53,15 +52,21 @@ class ContactsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    iconSize: 32,
-                    icon: const Icon(Icons.group_add),
-                  ),
-                  Text("Criar Grupo", style: TextStyle(fontSize: 16),)
-                ],
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.button,
+                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      iconSize: 32,
+                      icon: const Icon(Icons.group_add),
+                    ),
+                    Text("Criar Grupo", style: TextStyle(fontSize: 16),)
+                  ],
+                ),
               ),
             ],
           ),

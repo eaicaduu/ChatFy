@@ -9,6 +9,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: getBackgroundColor(context),
       appBar: AppBar(
         backgroundColor: getBackgroundColor(context),
         title: Text("Perfil"),

@@ -10,7 +10,7 @@ class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
 
   @override
-  MenuScreenState createState()  => MenuScreenState();
+  MenuScreenState createState() => MenuScreenState();
 }
 
 class MenuScreenState extends State<MenuScreen> {
@@ -18,9 +18,9 @@ class MenuScreenState extends State<MenuScreen> {
 
   final List<Widget> _screens = [
     ConfigScreen(),
-    Status(),
-    Chat(),
-    Profile(),
+    StatusScreen(),
+    ConversationsScreen(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,49 +32,29 @@ class MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: getBackgroundColor(context),
-        iconSize: 30,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Configuração"),
-          BottomNavigationBarItem(icon: Icon(Icons.auto_mode), label: "Status"),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Conversas"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
-        ],
-      ),
+        body: _screens[_selectedIndex],
+        bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+    ),
+    child:
+    BottomNavigationBar(
+    currentIndex: _selectedIndex,
+    onTap: _onItemTapped,
+    selectedItemColor: Colors.blue,
+    unselectedItemColor: Colors.grey,
+    backgroundColor: getBackgroundColor(context),
+    iconSize: 30,
+    type: BottomNavigationBarType.fixed,
+    items: [
+    BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Configuração"),
+    BottomNavigationBarItem(icon: Icon(Icons.auto_mode), label: "Status"),
+    BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Conversas"),
+    BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
+    ],
+    ),
+    ),
     );
-  }
-}
-
-class Chat extends StatelessWidget {
-  const Chat({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ConversationsScreen();
-  }
-}
-
-class Status extends StatelessWidget {
-  const Status({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return StatusScreen();
-  }
-}
-
-class Profile extends StatelessWidget {
-  const Profile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ProfileScreen();
   }
 }
