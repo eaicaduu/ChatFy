@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../values/navigate.dart';
 import 'appearance.dart';
 
 class ConfigSelection extends StatelessWidget {
@@ -53,7 +54,7 @@ class ConfigSelection extends StatelessWidget {
                   icon: Icons.brightness_6_outlined,
                   text: "Tema e Aparência",
                   onTap: () {
-                    navigateWithSlideTransition(context, AppearanceScreen());
+                    navigate(context, AppearanceScreen());
                   },
                 ),
                 Divider(),
@@ -102,22 +103,6 @@ Widget _buildConfigOption({
           ),
         ],
       ),
-    ),
-  );
-}
-
-void navigateWithSlideTransition(BuildContext context, Widget page) {
-  Navigator.push(
-    context,
-    PageRouteBuilder(
-      transitionDuration: Duration(milliseconds: 300),
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var tween = Tween(begin: Offset(1.0, 0.0), end: Offset.zero)
-            .chain(CurveTween(curve: Curves.easeInOut));
-
-        return SlideTransition(position: animation.drive(tween), child: child);
-      },
     ),
   );
 }

@@ -4,7 +4,7 @@ class AppColors {
 
   static const Color primary = Color(0xFF6200EA);
   static const Color secondary = Color(0xFF03DAC5);
-  static const Color global = Color(0xFF058BD0);
+  static const Color global = Colors.green;
   static const Color button = Color(0XFFF5F5F5);
 
 
