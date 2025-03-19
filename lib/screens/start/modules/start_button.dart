@@ -1,49 +1,52 @@
 import 'package:flutter/material.dart';
 import '../../../values/colors.dart';
+import '../../../values/navigate.dart';
+import '../number.dart';
 
 class StartButton extends StatelessWidget {
   const StartButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 160,
-          height: 160,
+    return  Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30),
+      child: GestureDetector(
+        onTap: () {
+          navigateReplacement(context, NumberScreen());
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.global,
-            border: Border.all(color: AppColors.global, width: 4),
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.global,
+                AppColors.global.withValues(alpha: 0.8)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.global.withValues(alpha: 0.5),
+                blurRadius: 8,
+                offset: const Offset(2, 4),
+              ),
+            ],
           ),
-          child: Center(
-            child: Icon(
-              Icons.chat_rounded,
-              size: 120,
-              color: getBackgroundColor(context),
+          child: const Center(
+            child: Text(
+              "Continuar",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 1.2,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 10),
-        const Text(
-          "ChatFy",
-          style: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            color: AppColors.global,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const Text(
-          "Aplicativo de mensagens rápido e seguro.",
-          style: TextStyle(
-            fontSize: 18,
-            color: AppColors.global,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+      ),
     );
   }
 }

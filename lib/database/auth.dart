@@ -1,27 +1,15 @@
 import 'package:chat/screens/start/start.dart';
 import 'package:flutter/material.dart';
 import 'package:chat/screens/menu.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'database.dart';
 
 class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});
 
   Future<bool> isUserLoggedIn() async {
-    final database = openDatabase(
-      join(await getDatabasesPath(), 'app_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE sessions(id INTEGER PRIMARY KEY, user_id TEXT)',
-        );
-      },
-      version: 1,
-    );
-
-    final db = await database;
-    final List<Map<String, dynamic>> sessions = await db.query('sessions');
-
-    return sessions.isNotEmpty;
+    final databaseHelper = DatabaseHelper();
+    String? session = await databaseHelper.getSession();
+    return session != null;
   }
 
   @override
@@ -30,13 +18,13 @@ class AuthCheck extends StatelessWidget {
       future: isUserLoggedIn(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasData && snapshot.data == true) {
-          return MenuScreen();
+          return const MenuScreen();
         } else {
-          return StartScreen();
+          return const StartScreen();
         }
       },
     );

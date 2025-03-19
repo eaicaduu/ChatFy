@@ -22,17 +22,33 @@ class DatabaseHelper {
     String path = join(documentsDirectory.path, "chat.db");
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE mensagens(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            text TEXT
+        CREATE TABLE mensagens(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          text TEXT
+        )
+      ''');
+
+        await db.execute('''
+        CREATE TABLE session(
+          phoneNumber TEXT PRIMARY KEY
+        )
+      ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('''
+          CREATE TABLE session(
+            phoneNumber TEXT PRIMARY KEY
           )
         ''');
+        }
       },
     );
   }
+
 
   Future<int> saveMessage(String text) async {
     final db = await database;
@@ -47,5 +63,25 @@ class DatabaseHelper {
   Future<int> deleteMessage() async {
     final db = await database;
     return await db.delete("mensagens");
+  }
+
+  Future<void> saveSession(String phoneNumber) async {
+    final db = await database;
+    await db.insert("session", {"phoneNumber": phoneNumber},
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<String?> getSession() async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query("session");
+    if (result.isNotEmpty) {
+      return result.first["phoneNumber"];
+    }
+    return null;
+  }
+
+  Future<void> clearSession() async {
+    final db = await database;
+    await db.delete("session");
   }
 }

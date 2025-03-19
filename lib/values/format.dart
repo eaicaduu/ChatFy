@@ -19,14 +19,24 @@ class PhoneFormatter extends TextInputFormatter {
   }
 
   String _applyPhoneMask(String text) {
-    if (text.length < 3) return text;
-    if (text.length < 7) return '(${text.substring(0, 2)}) ${text.substring(2)}';
-    if (text.length < 11) return '(${text.substring(0, 2)}) ${text.substring(2, 7)}-${text.substring(7)}';
+    if (text.length < 11) {
+      return text;
+    }
 
-    return '(${text.substring(0, 2)}) ${text.substring(2, 3)} ${text.substring(3, 7)}-${text.substring(7)}';
+    return '(${text.substring(0, 2)})${text.substring(2, 3)} ${text.substring(3, 7)}-${text.substring(7)}';
   }
 
   static String unmask(String phoneNumber) {
-    return phoneNumber.replaceAll(RegExp(r'\D'), '');
+    return phoneNumber.replaceAll(RegExp(r"\D"), '');
   }
+}
+
+String reformatPhoneNumber(String phoneNumber) {
+  String cleaned = phoneNumber.replaceAll(RegExp(r'\D'), '');
+
+  if (cleaned.length == 13) {
+    return '(${cleaned.substring(2, 4)})${cleaned.substring(4, 5)} ${cleaned.substring(5, 9)}-${cleaned.substring(9, 13)}';
+  }
+
+  return phoneNumber;
 }

@@ -1,9 +1,7 @@
-import 'package:chat/screens/start/modules/start_button.dart';
-import 'package:flutter/material.dart';
 import 'package:chat/screens/start/modules/start_module.dart';
+import 'package:flutter/material.dart';
+import 'package:chat/screens/start/modules/start_button.dart';
 import '../../values/colors.dart';
-import 'number.dart';
-
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
 
@@ -15,9 +13,9 @@ class StartScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const StartButton(),
-            const SizedBox(height: 50),
             const StartModule(),
+            const SizedBox(height: 50),
+            const StartButton(),
           ],
         ),
       ),

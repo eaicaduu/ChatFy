@@ -10,6 +10,7 @@ class StatusScreen extends StatelessWidget {
     return Scaffold(
         backgroundColor: getBackgroundColor(context),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: getBackgroundColor(context),
         title: Text("Status"),
         actions: [

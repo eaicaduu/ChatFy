@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../../values/colors.dart';
+import 'edit.dart';
+import 'modules/profile_module.dart';
+import 'modules/profile_selection.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -11,12 +12,26 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: getBackgroundColor(context),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: getBackgroundColor(context),
-        title: Text("Perfil"),
+        title: const Text("Perfil"),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () {
+              showModalBottomSheet(
+                backgroundColor: getBackgroundColor(context),
+                context: context,
+                isScrollControlled: true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) => Container(
+                  margin: const EdgeInsets.only(top: 16.0),
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: ProfileEdit(),
+                ),
+              );
             },
           ),
         ],
@@ -26,54 +41,9 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage("https://placeimg.com/640/480/people"),
-            ),
-            SizedBox(height: 16),
-            Text(
-              "ChatFy",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "(51)9 9999-9999",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            SizedBox(height: 32),
-            ListTile(
-              leading: Icon(FontAwesomeIcons.instagram),
-              title: Text("Instagram"),
-              onTap: () {
-
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.bookmarks_outlined),
-              title: Text("Favoritos"),
-              onTap: () {
-
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.verified_outlined),
-              title: Text("Premium"),
-              onTap: () {
-
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text("Sair"),
-              onTap: () {
-              },
-            ),
+            ProfileModule(),
+            const SizedBox(height: 32),
+            ProfileSelection(),
           ],
         ),
       ),

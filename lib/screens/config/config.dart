@@ -12,6 +12,7 @@ class ConfigScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: getBackgroundColor(context),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: getBackgroundColor(context),
         title: Text("Configuração"),
       ),
