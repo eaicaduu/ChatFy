@@ -78,7 +78,7 @@ class ConversationsBarState extends State<ConversationsBar> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 2.0),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,

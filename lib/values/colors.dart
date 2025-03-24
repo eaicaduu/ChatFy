@@ -6,6 +6,7 @@ class AppColors {
   static const Color secondary = Color(0xFF03DAC5);
   static const Color global = Colors.green;
   static const Color button = Color(0XFFF5F5F5);
+  static const Color backgroundPhoto = Color(0XFF979CA6);
 
 
   static const Color backgroundLight = Color(0xFFFFFFFF);
