@@ -2,6 +2,7 @@ import 'package:chat/screens/start/modules/number_button.dart';
 import 'package:chat/screens/start/modules/number_module.dart';
 import 'package:flutter/material.dart';
 import '../../values/colors.dart';
+import 'modules/number_text.dart';
 
 class NumberScreen extends StatefulWidget {
   const NumberScreen({super.key});
@@ -58,7 +59,7 @@ class PhoneScreenState extends State<NumberScreen> {
             isPhoneValid: _isPhoneValid,
             isLoading: _isLoading,
             setLoading: setLoading,
-          )
+          ),
         ],
       ),
     );

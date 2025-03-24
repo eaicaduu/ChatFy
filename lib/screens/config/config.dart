@@ -1,5 +1,5 @@
 
-import 'package:chat/screens/config/config_selection.dart';
+import 'package:chat/screens/config/modules/config_selection.dart';
 import 'package:flutter/material.dart';
 
 import '../../values/colors.dart';

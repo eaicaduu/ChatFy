@@ -14,7 +14,32 @@ class ConversationsBar extends StatefulWidget implements PreferredSizeWidget {
 
 class ConversationsBarState extends State<ConversationsBar> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   bool _showClearIcon = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _focusNode.addListener(() {
+      setState(() {
+        _showClearIcon = _focusNode.hasFocus || _controller.text.isNotEmpty;
+      });
+    });
+
+    _controller.addListener(() {
+      setState(() {
+        _showClearIcon = _controller.text.isNotEmpty || _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   void openContactsScreen(BuildContext context) {
     showModalBottomSheet(
@@ -30,22 +55,6 @@ class ConversationsBarState extends State<ConversationsBar> {
         child: const ContactsScreen(),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(() {
-      setState(() {
-        _showClearIcon = _controller.text.isNotEmpty;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -70,6 +79,10 @@ class ConversationsBarState extends State<ConversationsBar> {
                   onPressed: _showClearIcon
                       ? () {
                     _controller.clear();
+                    setState(() {
+                      _showClearIcon = false;
+                    });
+                    FocusScope.of(context).unfocus();
                   }
                       : () => openContactsScreen(context),
                 ),
@@ -87,6 +100,7 @@ class ConversationsBarState extends State<ConversationsBar> {
                 : Matrix4.translationValues(0, 0, 0),
             child: TextField(
               controller: _controller,
+              focusNode: _focusNode,
               decoration: InputDecoration(
                 hintText: "Pesquisar...",
                 prefixIcon: const Icon(Icons.search),
@@ -103,6 +117,7 @@ class ConversationsBarState extends State<ConversationsBar> {
                   onPressed: () {
                     _controller.clear();
                     FocusScope.of(context).unfocus();
+                    setState(() => _showClearIcon = false);
                   },
                 )
                     : null,

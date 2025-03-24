@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../values/colors.dart';
 import '../../../values/format.dart';
+import 'number_text.dart';
 
 class NumberModule extends StatelessWidget {
   final TextEditingController phoneController;
@@ -64,6 +65,7 @@ class NumberModule extends StatelessWidget {
               ),
             ),
           ),
+          NumberText(phoneController: phoneController),
         ],
       ),
     );

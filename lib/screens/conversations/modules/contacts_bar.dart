@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class ContactsBar extends StatelessWidget {
   final int contactCount;
+  final int contactCountFilter;
   final TextEditingController searchController;
   final ValueChanged<String> onSearchChanged;
 
   const ContactsBar({
     super.key,
     required this.contactCount,
+    required this.contactCountFilter,
     required this.searchController,
     required this.onSearchChanged,
   });
@@ -30,6 +32,7 @@ class ContactsBar extends StatelessWidget {
                 iconSize: 32,
                 onPressed: () {
                   Navigator.pop(context);
+                  FocusScope.of(context).unfocus();
                 },
               ),
             ],
@@ -42,10 +45,13 @@ class ContactsBar extends StatelessWidget {
             controller: searchController,
             onChanged: onSearchChanged,
             decoration: InputDecoration(
-              hintText: "Pesquisar contatos...",
+              hintText: "Pesquisar...",
               prefixIcon: const Icon(Icons.search),
+              filled: true,
+              fillColor: Colors.grey.withValues(alpha: 0.2),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide.none,
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
             ),

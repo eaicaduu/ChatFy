@@ -1,7 +1,10 @@
+import 'package:chat/screens/config/devices.dart';
 import 'package:flutter/material.dart';
 
-import '../../values/navigate.dart';
-import 'appearance.dart';
+import '../../../values/navigate.dart';
+import '../info.dart';
+import '../theme.dart';
+import '../analytics.dart';
 
 class ConfigSelection extends StatelessWidget {
   const ConfigSelection({super.key});
@@ -22,19 +25,25 @@ class ConfigSelection extends StatelessWidget {
                 _buildConfigOption(
                   icon: Icons.devices,
                   text: "Dispositivos",
-                  onTap: () {},
+                  onTap: () {
+                    navigate(context, DevicesScreen());
+                  },
                 ),
                 Divider(),
                 _buildConfigOption(
                   icon: Icons.analytics_outlined,
                   text: "Sua Atividade",
-                  onTap: () {},
+                  onTap: () {
+                    navigate(context, AnalyticsScreen());
+                  },
                 ),
                 Divider(),
                 _buildConfigOption(
                   icon: Icons.info_outline_rounded,
                   text: "Ajuda",
-                  onTap: () {},
+                  onTap: () {
+                    navigate(context, InfoScreen());
+                  },
                 ),
               ],
             ),

@@ -1,4 +1,4 @@
-import 'package:chat/screens/config/theme_selection.dart';
+import 'package:chat/screens/config/modules/theme_selection.dart';
 import 'package:flutter/material.dart';
 import '../../values/colors.dart';
 

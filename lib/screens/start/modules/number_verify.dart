@@ -65,7 +65,6 @@ Future<void> saveSession(String phoneNumber, BuildContext context) async {
       'phoneNumber': phoneNumber,
       'timestamp': FieldValue.serverTimestamp(),
     });
-
     await databaseHelper.saveSession(phoneNumber);
   } else {
     await databaseHelper.saveSession(phoneNumber);

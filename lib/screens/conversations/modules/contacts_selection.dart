@@ -13,7 +13,7 @@ class ContactsSelection extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppColors.button,
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -54,7 +54,7 @@ class ContactsSelection extends StatelessWidget {
 
           Container(
             decoration: BoxDecoration(
-              color: AppColors.button,
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: const BorderRadius.only(
                 bottomRight: Radius.circular(12),
                 bottomLeft: Radius.circular(12),

@@ -55,7 +55,8 @@ class ContactsScreenState extends State<ContactsScreen> {
         child: Column(
           children: [
             ContactsBar(
-              contactCount: filteredContacts.length,
+              contactCount: contacts.length,
+              contactCountFilter: filteredContacts.length,
               searchController: searchController,
               onSearchChanged: (query) => _filterContacts(),
             ),
