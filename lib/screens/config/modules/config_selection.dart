@@ -1,4 +1,7 @@
+import 'package:chat/screens/config/cloud.dart';
 import 'package:chat/screens/config/devices.dart';
+import 'package:chat/screens/config/notify.dart';
+import 'package:chat/screens/config/privacy.dart';
 import 'package:flutter/material.dart';
 
 import '../../../values/navigate.dart';
@@ -70,19 +73,25 @@ class ConfigSelection extends StatelessWidget {
                 _buildConfigOption(
                   icon: Icons.notifications_active_outlined,
                   text: "Notificações e Sons",
-                  onTap: () {},
+                  onTap: () {
+                    navigate(context, NotifyScreen());
+                  },
                 ),
                 Divider(),
                 _buildConfigOption(
                   icon: Icons.lock_outline,
                   text: "Privacidade e Segurança",
-                  onTap: () {},
+                  onTap: () {
+                    navigate(context, PrivacyScreen());
+                  },
                 ),
                 Divider(),
                 _buildConfigOption(
                   icon: Icons.cloud_outlined,
                   text: "Dados e Armazenamento",
-                  onTap: () {},
+                  onTap: () {
+                    navigate(context, CloudScreen());
+                  },
                 ),
               ],
             ),
