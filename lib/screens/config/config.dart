@@ -1,4 +1,5 @@
 
+import 'package:chat/screens/config/modules/config_bar.dart';
 import 'package:chat/screens/config/modules/config_selection.dart';
 import 'package:flutter/material.dart';
 
@@ -11,11 +12,7 @@ class ConfigScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: getBackgroundColor(context),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: getBackgroundColor(context),
-        title: Text("Configuração"),
-      ),
+      appBar: ConfigBar(),
       body: Column(
         children: [
           ConfigSelection(),

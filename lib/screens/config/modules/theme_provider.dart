@@ -7,26 +7,35 @@ class ThemeProvider with ChangeNotifier {
 
   ThemeMode get themeMode => _themeMode;
 
-  void setTheme(ThemeMode mode) {
+  void setTheme(ThemeMode mode, BuildContext context) {
     _themeMode = mode;
     notifyListeners();
-    _updateSystemUI();
+    _updateSystemUI(context);
   }
 
-  void _updateSystemUI() {
+  void _updateSystemUI(BuildContext context) {
+    final backgroundColor = getBackgroundColor(context);
     if (_themeMode == ThemeMode.dark) {
+      // Modo escuro
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: AppColors.backgroundDark,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: AppColors.backgroundDark,
         systemNavigationBarIconBrightness: Brightness.light,
       ));
-    } else {
+    } else if (_themeMode == ThemeMode.light) {
+      // Modo claro
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.white,
         systemNavigationBarIconBrightness: Brightness.dark,
+      ));
+    } else {
+      // Modo sistema (tema segue o sistema)
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarIconBrightness: backgroundColor == AppColors.backgroundDark
+            ? Brightness.light
+            : Brightness.dark,
+        systemNavigationBarIconBrightness: backgroundColor == AppColors.backgroundDark
+            ? Brightness.light
+            : Brightness.dark,
       ));
     }
   }

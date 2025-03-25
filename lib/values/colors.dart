@@ -7,7 +7,7 @@ class AppColors {
   static const Color global = Colors.green;
   static const Color button = Color(0XFFF5F5F5);
   static const Color backgroundPhoto = Color(0XFF979CA6);
-
+  static const Color transparent = Color(0x00000000);
 
   static const Color backgroundLight = Color(0xFFFFFFFF);
   static const Color textColorLight = Color(0xFF333333);
