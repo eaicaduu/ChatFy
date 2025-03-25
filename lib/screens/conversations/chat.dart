@@ -3,10 +3,18 @@ import '../../database/database.dart';
 
 
 class ChatScreen extends StatefulWidget {
+  final String id;
   final String nome;
+  final String number;
   final String photo;
 
-  const ChatScreen({super.key, required this.nome, required this.photo});
+  const ChatScreen({
+    super.key,
+    required this.id,
+    required this.nome,
+    required this.number,
+    required this.photo
+  });
 
   @override
   ChatScreenState createState() => ChatScreenState();

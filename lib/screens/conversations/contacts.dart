@@ -1,5 +1,8 @@
+
 import 'package:chat/screens/conversations/modules/contacts_bar.dart';
+import 'package:chat/screens/conversations/modules/contacts_list.dart';
 import 'package:chat/screens/conversations/modules/contacts_selection.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../values/colors.dart';
@@ -16,7 +19,7 @@ class ContactsScreenState extends State<ContactsScreen> {
   List<Map<String, String>> contacts = [];
   List<Map<String, String>> filteredContacts = [];
   final TextEditingController searchController = TextEditingController();
-
+  Map<String, bool> verifiedNumbers = {};
   @override
   void initState() {
     super.initState();
@@ -29,6 +32,23 @@ class ContactsScreenState extends State<ContactsScreen> {
     if (mounted) {
       setState(() {
         contacts = result;
+      });
+
+      for (var contact in result) {
+        checkNumberInFirebase(contact['number']!);
+      }
+    }
+  }
+
+  void checkNumberInFirebase(String phoneNumber) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('phoneNumber', isEqualTo: phoneNumber)
+        .get();
+
+    if (mounted) {
+      setState(() {
+        verifiedNumbers[phoneNumber] = snapshot.docs.isNotEmpty;
       });
     }
   }
@@ -61,35 +81,10 @@ class ContactsScreenState extends State<ContactsScreen> {
               onSearchChanged: (query) => _filterContacts(),
             ),
             ContactsSelection(),
-            const SizedBox(height: 8),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: sortedContacts.isEmpty
-                    ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.global))
-                    : ListView.builder(
-                  itemCount: sortedContacts.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage:
-                        sortedContacts[index]['photoUrl'] != null &&
-                            sortedContacts[index]['photoUrl']!.isNotEmpty
-                            ? NetworkImage(sortedContacts[index]['photoUrl']!)
-                            : null,
-                        radius: 24,
-                        backgroundColor: AppColors.backgroundPhoto,
-                        child: sortedContacts[index]['photoUrl'] == null ||
-                            sortedContacts[index]['photoUrl']!.isEmpty
-                            ? const Icon(Icons.person_rounded, color: Colors.white, size: 40)
-                            : null,
-                      ),
-                      title: Text(sortedContacts[index]['name']!),
-                      subtitle: Text(sortedContacts[index]['number']!),
-                    );
-                  },
-                ),
+              child: ContactsList(
+                sortedContacts: sortedContacts,
+                verifiedNumbers: verifiedNumbers,
               ),
             ),
           ],
