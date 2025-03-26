@@ -42,7 +42,7 @@ class MenuScreenState extends State<MenuScreen> {
     BottomNavigationBar(
     currentIndex: _selectedIndex,
     onTap: _onItemTapped,
-    selectedItemColor: Colors.blue,
+    selectedItemColor: AppColors.global,
     unselectedItemColor: Colors.grey,
     backgroundColor: getBackgroundColor(context),
     iconSize: 30,

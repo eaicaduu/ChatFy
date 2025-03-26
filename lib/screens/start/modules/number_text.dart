@@ -13,22 +13,21 @@ class NumberText extends StatefulWidget {
 
 class NumberTextState extends State<NumberText> {
   static const platform = MethodChannel('com.example.chat/phone');
-  Future<void> _getPhoneNumber() async {
-    String? phoneNumber;
 
+  Future<void> _getPhoneNumber() async {
     try {
       final String number = await platform.invokeMethod('getPhoneNumber');
       setState(() {
-        phoneNumber = number;
+        widget.phoneController.text = number;
       });
     } catch (e) {
-      SnackBar(
-        content: Text("Erro ao obter o número: $e"),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao obter o número: $e"),
+          backgroundColor: Colors.red,
+        ),
       );
-      phoneNumber = null;
     }
-
-    widget.phoneController.text = phoneNumber!;
   }
 
   @override

@@ -1,3 +1,5 @@
+
+import 'package:chat/screens/profile/logout.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -33,7 +35,7 @@ class ProfileSelection extends StatelessWidget {
           leading: const Icon(Icons.exit_to_app),
           title: const Text("Sair"),
           onTap: () {
-            // Lógica para sair
+            confirmLogout(context);
           },
         ),
       ],

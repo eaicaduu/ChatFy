@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ContactsBar extends StatelessWidget {
+class ContactsBar extends StatefulWidget {
   final int contactCount;
   final int contactCountFilter;
   final TextEditingController searchController;
@@ -15,16 +15,47 @@ class ContactsBar extends StatelessWidget {
   });
 
   @override
+  ContactsBarState createState() => ContactsBarState();
+}
+
+class ContactsBarState extends State<ContactsBar> {
+  final FocusNode _focusNode = FocusNode();
+  bool showClearIcon = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _focusNode.addListener(() {
+      setState(() {
+        showClearIcon = _focusNode.hasFocus || widget.searchController.text.isNotEmpty;
+      });
+    });
+
+    widget.searchController.addListener(() {
+      setState(() {
+        showClearIcon = widget.searchController.text.isNotEmpty || _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "$contactCount Contatos",
+                "${widget.contactCountFilter} Contatos",
                 style: const TextStyle(fontSize: 22),
               ),
               IconButton(
@@ -42,8 +73,9 @@ class ContactsBar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
-            controller: searchController,
-            onChanged: onSearchChanged,
+            controller: widget.searchController,
+            focusNode: _focusNode,
+            onChanged: widget.onSearchChanged,
             decoration: InputDecoration(
               hintText: "Pesquisar...",
               prefixIcon: const Icon(Icons.search),
@@ -54,6 +86,16 @@ class ContactsBar extends StatelessWidget {
                 borderSide: BorderSide.none,
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
+              suffixIcon: showClearIcon
+                  ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  widget.searchController.clear();
+                  FocusScope.of(context).unfocus();
+                  setState(() => showClearIcon = false);
+                },
+              )
+                  : null,
             ),
           ),
         ),

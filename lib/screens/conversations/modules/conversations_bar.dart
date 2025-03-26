@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../values/colors.dart';
 import '../contacts.dart';
+import 'contacts_service.dart';
 
 class ConversationsBar extends StatefulWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const ConversationsBar({super.key}) : preferredSize = const Size.fromHeight(110.0);
+  const ConversationsBar({super.key})
+      : preferredSize = const Size.fromHeight(110.0);
 
   @override
   ConversationsBarState createState() => ConversationsBarState();
@@ -15,23 +18,54 @@ class ConversationsBar extends StatefulWidget implements PreferredSizeWidget {
 class ConversationsBarState extends State<ConversationsBar> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  bool _showClearIcon = false;
+  bool showClearIcon = false;
+  List<Map<String, String>> contacts = [];
+  Map<String, bool> verifiedNumbers = {};
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    fetchContacts();
 
     _focusNode.addListener(() {
       setState(() {
-        _showClearIcon = _focusNode.hasFocus || _controller.text.isNotEmpty;
+        showClearIcon = _focusNode.hasFocus || _controller.text.isNotEmpty;
       });
     });
 
     _controller.addListener(() {
       setState(() {
-        _showClearIcon = _controller.text.isNotEmpty || _focusNode.hasFocus;
+        showClearIcon = _controller.text.isNotEmpty || _focusNode.hasFocus;
       });
     });
+  }
+
+  void fetchContacts() async {
+    List<Map<String, String>> result = await ContactService.getContacts();
+    if (mounted) {
+      setState(() {
+        contacts = result;
+        isLoading = false;
+      });
+
+      for (var contact in result) {
+        checkNumberInFirebase(contact['number']!);
+      }
+    }
+  }
+
+  void checkNumberInFirebase(String phoneNumber) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('phoneNumber', isEqualTo: phoneNumber)
+        .get();
+
+    if (mounted) {
+      setState(() {
+        verifiedNumbers[phoneNumber] = snapshot.docs.isNotEmpty;
+      });
+    }
   }
 
   @override
@@ -52,7 +86,11 @@ class ConversationsBarState extends State<ConversationsBar> {
       builder: (context) => Container(
         margin: const EdgeInsets.only(top: 16.0),
         height: MediaQuery.of(context).size.height * 0.8,
-        child: const ContactsScreen(),
+        child: ContactsScreen(
+          contacts: contacts,
+          verifiedNumbers: verifiedNumbers,
+          isLoading: isLoading,
+        ),
       ),
     );
   }
@@ -62,7 +100,7 @@ class ConversationsBarState extends State<ConversationsBar> {
     return Column(
       children: [
         AnimatedOpacity(
-          opacity: _showClearIcon ? 0.0 : 1.0,
+          opacity: showClearIcon ? 0.0 : 1.0,
           duration: const Duration(milliseconds: 200),
           child: AppBar(
             automaticallyImplyLeading: false,
@@ -76,14 +114,14 @@ class ConversationsBarState extends State<ConversationsBar> {
                   iconSize: 32,
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
-                  onPressed: _showClearIcon
+                  onPressed: showClearIcon
                       ? () {
-                    _controller.clear();
-                    setState(() {
-                      _showClearIcon = false;
-                    });
-                    FocusScope.of(context).unfocus();
-                  }
+                          _controller.clear();
+                          setState(() {
+                            showClearIcon = false;
+                          });
+                          FocusScope.of(context).unfocus();
+                        }
                       : () => openContactsScreen(context),
                 ),
               ),
@@ -95,7 +133,7 @@ class ConversationsBarState extends State<ConversationsBar> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
-            transform: _showClearIcon
+            transform: showClearIcon
                 ? Matrix4.translationValues(0, -50, 0)
                 : Matrix4.translationValues(0, 0, 0),
             child: TextField(
@@ -110,16 +148,17 @@ class ConversationsBarState extends State<ConversationsBar> {
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                suffixIcon: _showClearIcon
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 16.0),
+                suffixIcon: showClearIcon
                     ? IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    _controller.clear();
-                    FocusScope.of(context).unfocus();
-                    setState(() => _showClearIcon = false);
-                  },
-                )
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _controller.clear();
+                          FocusScope.of(context).unfocus();
+                          setState(() => showClearIcon = false);
+                        },
+                      )
                     : null,
               ),
             ),

@@ -61,7 +61,6 @@ class MainActivity : FlutterActivity() {
     private fun getPhoneNumber(): String? {
         val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Em Android 8 (Oreo) ou superior, o número de telefone não é sempre fornecido.
             telephonyManager.line1Number
         } else {
             null
