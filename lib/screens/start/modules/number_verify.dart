@@ -25,13 +25,20 @@ void verifyPhoneNumber(String phoneNumber, BuildContext context, Function onComp
     },
     codeSent: (String verificationId, int? resendToken) {
       onComplete();
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => ConfirmScreen(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 300),
+          pageBuilder: (context, animation, secondaryAnimation) => ConfirmScreen(
             phoneNumber: formattedPhoneNumber,
             verificationId: verificationId,
           ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                .chain(CurveTween(curve: Curves.easeInOut));
+
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
         ),
       );
     },
@@ -54,7 +61,7 @@ Future<void> saveSession(String phoneNumber, BuildContext context) async {
 
   if (existingSession != null) {
     await db.collection('sessions').doc(existingSession).delete();
-    await databaseHelper.clearSession();
+    await databaseHelper.deleteSession(phoneNumber);
     await auth.signOut();
   }
 

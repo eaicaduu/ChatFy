@@ -1,13 +1,18 @@
 import 'package:chat/screens/start/start.dart';
 import 'package:chat/values/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-void signOut(BuildContext context) async {
+import '../../database/database.dart';
+
+void signOut(BuildContext context, String phoneNumber) async {
   final navigator = Navigator.of(context);
-  await FirebaseAuth.instance.signOut();
-
-
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
+  await user?.delete();
+  await FirebaseFirestore.instance.collection('sessions').doc(phoneNumber).delete();
+  await DatabaseHelper().deleteSession(phoneNumber);
 
   if (!context.mounted) return;
 
@@ -16,7 +21,7 @@ void signOut(BuildContext context) async {
   );
 }
 
-void confirmLogout(BuildContext context) {
+void confirmLogout(BuildContext context, String phoneNumber) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -37,7 +42,7 @@ void confirmLogout(BuildContext context) {
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
-            signOut(context);
+            signOut(context, phoneNumber);
           },
           style: TextButton.styleFrom(
             backgroundColor: AppColors.global,

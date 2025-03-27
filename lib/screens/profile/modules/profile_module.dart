@@ -97,7 +97,7 @@ class ProfileModule extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              ProfileSelection(),
+              ProfileSelection(phoneNumber: phoneNumber),
             ],
           ),
         );

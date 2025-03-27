@@ -80,8 +80,8 @@ class DatabaseHelper {
     return null;
   }
 
-  Future<void> clearSession() async {
+  Future<void> deleteSession(String phoneNumber) async {
     final db = await database;
-    await db.delete("session");
+    await db.delete("session", where: "phoneNumber = ?", whereArgs: [phoneNumber]);
   }
 }

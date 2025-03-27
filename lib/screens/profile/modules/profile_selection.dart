@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileSelection extends StatelessWidget {
-  const ProfileSelection({super.key});
+  final String phoneNumber;
+  const ProfileSelection({super.key,required this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class ProfileSelection extends StatelessWidget {
           leading: const Icon(Icons.exit_to_app),
           title: const Text("Sair"),
           onTap: () {
-            confirmLogout(context);
+            confirmLogout(context, phoneNumber);
           },
         ),
       ],

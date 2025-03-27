@@ -30,7 +30,7 @@ void showPhoneConfirmation(String phoneNumber, BuildContext context) {
                 Text(
                   phoneNumber,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -39,7 +39,7 @@ void showPhoneConfirmation(String phoneNumber, BuildContext context) {
                     TextButton(
                       onPressed: isLoading ? null : () => Navigator.pop(context),
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: isLoading ? Colors.grey : Colors.red,
                         foregroundColor: getBackgroundColor(context),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
@@ -56,7 +56,7 @@ void showPhoneConfirmation(String phoneNumber, BuildContext context) {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.global,
+                        backgroundColor: isLoading ? Colors.grey : AppColors.global,
                         foregroundColor: getBackgroundColor(context),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),

@@ -14,7 +14,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.example.chat/phone"
+    private val CHANNELPHONE = "com.example.chat/phone"
     private val CHANNELCONTACTS = "com.example.chat/contacts"
     private val REQUEST_CODE_CONTACTS = 100
     private val REQUEST_CODE_PHONE = 101
@@ -22,24 +22,31 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        // Canal para obter o número de telefone
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
-            if (call.method == "getPhoneNumber") {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                    val phoneNumber = getPhoneNumber()
-                    if (phoneNumber != null) {
-                        result.success(phoneNumber)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNELPHONE).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getPhoneNumber" -> {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                        val phoneNumber = getPhoneNumber()
+                        if (phoneNumber != null) {
+                            result.success(phoneNumber)
+                        } else {
+                            result.error("UNAVAILABLE", "Número de telefone não disponível", null)
+                        }
                     } else {
-                        result.error("UNAVAILABLE", "Número de telefone não disponível", null)
+                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE_PHONE)
+                        result.error("PERMISSION_DENIED", "Permissão para acessar o número de telefone negada", null)
                     }
-                } else {
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE_PHONE)
-                    result.error("PERMISSION_DENIED", "Permissão para acessar o número de telefone negada", null)
                 }
-            } else {
-                result.notImplemented()
+                "getAndroidVersion" -> {
+                    val androidVersion = android.os.Build.VERSION.SDK_INT // Retorna o código numérico da versão
+                    result.success(androidVersion)
+                }
+                else -> {
+                    result.notImplemented()
+                }
             }
         }
+
 
         // Canal para obter os contatos
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNELCONTACTS).setMethodCallHandler { call, result ->
@@ -59,12 +66,14 @@ class MainActivity : FlutterActivity() {
 
     // Função para obter o número de telefone
     private fun getPhoneNumber(): String? {
-        val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            telephonyManager.line1Number
-        } else {
-            null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_NUMBERS), REQUEST_CODE_PHONE)
+                return null
+            }
         }
+        val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+        return telephonyManager.line1Number
     }
 
     // Função para obter os contatos

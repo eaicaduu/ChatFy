@@ -1,5 +1,6 @@
+import 'package:chat/screens/start/modules/number_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../values/colors.dart';
 
 class NumberText extends StatefulWidget {
@@ -12,33 +13,50 @@ class NumberText extends StatefulWidget {
 }
 
 class NumberTextState extends State<NumberText> {
-  static const platform = MethodChannel('com.example.chat/phone');
+  Future<void> getPhoneNumber() async {
+      var status = await Permission.phone.request();
+      var sms = await Permission.sms.request();
 
-  Future<void> _getPhoneNumber() async {
-    try {
-      final String number = await platform.invokeMethod('getPhoneNumber');
-      setState(() {
-        widget.phoneController.text = number;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Erro ao obter o número: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (status.isGranted && sms.isGranted) {
+        final String number = await PhoneService.getPhoneNumber();
+
+        setState(() {
+          if (number.isNotEmpty) {
+            widget.phoneController.text = number;
+          } else {
+            String message = "Não conseguimos acessar o número do seu telefone.";
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+              ),
+            );
+          }
+        });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Permissão negada. Não é possível obter o número."),
+            ),
+          );
+        }
+      }
     }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextButton(
-        onPressed: _getPhoneNumber,
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.global,
+          overlayColor: Colors.transparent,
+        ),
+        onPressed: getPhoneNumber,
         child: const Text(
           "Qual o meu número?",
-          style: TextStyle(color: AppColors.global, fontSize: 18),
+          style: TextStyle(fontSize: 18),
         ),
       ),
     );
