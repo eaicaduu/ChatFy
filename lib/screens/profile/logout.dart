@@ -7,17 +7,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../database/database.dart';
 
 void signOut(BuildContext context, String phoneNumber) async {
-  final navigator = Navigator.of(context);
-  FirebaseAuth auth = FirebaseAuth.instance;
-  User? user = auth.currentUser;
-  await user?.delete();
-  await FirebaseFirestore.instance.collection('sessions').doc(phoneNumber).delete();
   await DatabaseHelper().deleteSession(phoneNumber);
+  final navigator = Navigator.of(context);
+  final db = FirebaseFirestore.instance;
+  await db.collection('sessions').doc(phoneNumber).set({
+    'status': false,
+    'deviceId': null,
+    'lastLogout': FieldValue.serverTimestamp(),
+  });
 
-  if (!context.mounted) return;
 
   navigator.pushReplacement(
-    MaterialPageRoute(builder: (context) => const StartScreen()),
+    MaterialPageRoute(builder: (context) => StartScreen()),
   );
 }
 

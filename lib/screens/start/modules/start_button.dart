@@ -12,7 +12,7 @@ class StartButton extends StatelessWidget {
       padding: const EdgeInsets.only(left: 30, right: 30),
       child: GestureDetector(
         onTap: () {
-          navigateReplacement(context, NumberScreen());
+          navigate(context, NumberScreen());
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

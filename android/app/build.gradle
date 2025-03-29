@@ -45,3 +45,18 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation 'com.google.firebase:firebase-auth:21.0.5'  // Adicione esta dependência
+    implementation 'com.google.firebase:firebase-core:21.1.0' // Certifique-se de ter esta dependência
+
+    // Outras dependências necessárias
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'  // Se você precisar de Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-analytics:21.0.0' // Para analytics, caso necessário
+
+    // Outras dependências de Flutter
+    implementation 'androidx.appcompat:appcompat:1.4.0'  // Para AppCompatActivity
+    // Se você ainda não tiver, adicione as dependências do Flutter
+    implementation 'com.google.firebase:firebase-bom:30.0.1'
+}
+

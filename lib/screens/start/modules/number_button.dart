@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../../values/colors.dart';
 import 'number_send.dart';
 
-
 class NumberButton extends StatelessWidget {
   final TextEditingController phoneController;
   final bool isPhoneValid;
@@ -34,7 +33,9 @@ class NumberButton extends StatelessWidget {
           onPressed: isPhoneValid
               ? () {
             String phoneNumber = phoneController.text.trim();
-            showPhoneConfirmation(phoneNumber, context);
+            showPhoneConfirmation(phoneNumber, context, () {
+              setLoading(false);
+            });
           }
               : null,
           backgroundColor: Colors.transparent,

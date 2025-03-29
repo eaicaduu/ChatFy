@@ -4,53 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../database/database.dart';
-import '../confirm.dart';
 
-void verifyPhoneNumber(String phoneNumber, BuildContext context, Function onComplete) {
-  String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
-  String formattedPhoneNumber = "+55$cleanedPhoneNumber";
+String verificationId = '';
+int? resendToken;
 
-  FirebaseAuth.instance.verifyPhoneNumber(
-    phoneNumber: formattedPhoneNumber,
-    timeout: const Duration(seconds: 60),
-    verificationCompleted: (PhoneAuthCredential credential) async {
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      onComplete();
-    },
-    verificationFailed: (FirebaseAuthException e) {
-      onComplete();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro: ${e.message}")),
-      );
-    },
-    codeSent: (String verificationId, int? resendToken) {
-      onComplete();
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (context, animation, secondaryAnimation) => ConfirmScreen(
-            phoneNumber: formattedPhoneNumber,
-            verificationId: verificationId,
-          ),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            var tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                .chain(CurveTween(curve: Curves.easeInOut));
+Future<void> verifyCode(
+    String code,
+    String verificationId,
+    BuildContext context,
+    String phoneNumber,
+    Function(bool) setError,
+    ) async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: code,
+    );
 
-            return SlideTransition(position: animation.drive(tween), child: child);
-          },
-        ),
-      );
-    },
-    codeAutoRetrievalTimeout: (String verificationId) {
-      onComplete();
-    },
-  );
-}
+    await FirebaseAuth.instance.signInWithCredential(credential);
 
-void verifyCode(String code, String verificationId, BuildContext context, String phoneNumber, Function(bool) setError,) async {
     await saveSession(phoneNumber, context);
 }
+
 
 Future<void> saveSession(String phoneNumber, BuildContext context) async {
   final FirebaseFirestore db = FirebaseFirestore.instance;

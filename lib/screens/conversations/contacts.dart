@@ -21,29 +21,19 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class ContactsScreenState extends State<ContactsScreen> {
-  List<Map<String, String>> filteredContacts = [];
   final TextEditingController searchController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   void _filterContacts(String query) {
-    setState(() {
-      query = query.toLowerCase();
-      filteredContacts = widget.contacts
-          .where((contact) =>
-              contact['name']!.toLowerCase().contains(query) ||
-              contact['number']!.contains(query))
-          .toList();
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> displayedContacts =
-        searchController.text.isEmpty ? widget.contacts : filteredContacts;
+    var displayedContacts = searchController.text.isEmpty
+        ? widget.contacts
+        : widget.contacts.where((contact) =>
+    contact['name']!.toLowerCase().contains(searchController.text.toLowerCase()) ||
+        contact['number']!.contains(searchController.text)).toList();
 
     displayedContacts.sort((a, b) => a['name']!.compareTo(b['name']!));
 
@@ -58,19 +48,19 @@ class ContactsScreenState extends State<ContactsScreen> {
               searchController: searchController,
               onSearchChanged: _filterContacts,
             ),
-            ContactsSelection(),
+            const ContactsSelection(),
             Expanded(
               child: displayedContacts.isEmpty
                   ? const Center(
-                      child: Text(
-                        "Nenhum contato encontrado",
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    )
+                child: Text(
+                  "Nenhum contato encontrado",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              )
                   : ContactsList(
-                      sortedContacts: displayedContacts,
-                      verifiedNumbers: widget.verifiedNumbers,
-                    ),
+                sortedContacts: displayedContacts,
+                verifiedNumbers: widget.verifiedNumbers,
+              ),
             ),
           ],
         ),

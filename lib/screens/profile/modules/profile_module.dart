@@ -1,8 +1,10 @@
+import 'package:chat/screens/profile/modules/profile_image.dart';
 import 'package:chat/screens/profile/modules/profile_selection.dart';
 import 'package:chat/values/format.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../../database/database.dart';
 
 class ProfileModule extends StatelessWidget {
@@ -23,22 +25,33 @@ class ProfileModule extends StatelessWidget {
           .doc(user.uid)
           .get();
 
+      String? photoURL = await getProfileImage(user.uid);
+
       if (userDoc.exists) {
         Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
         return {
           'phoneNumber': user.phoneNumber,
           'displayName': data['displayName'] ?? user.displayName,
-          'photoURL': data['photoURL'] ?? user.photoURL,
+          'photoURL': photoURL ?? data['photoURL'] ?? user.photoURL,
         };
       }
       return {
         'phoneNumber': user.phoneNumber,
         'displayName': user.displayName,
-        'photoURL': user.photoURL,
+        'photoURL': photoURL ?? user.photoURL,
       };
     }
 
     return {'phoneNumber': null, 'displayName': null, 'photoURL': null};
+  }
+
+  Future<String?> getProfileImage(String userId) async {
+    try {
+      final ref = FirebaseStorage.instance.ref().child('profile_pictures/$userId.jpg');
+      return await ref.getDownloadURL();
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -50,8 +63,8 @@ class ProfileModule extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        String? phoneNumber = snapshot.data?['phoneNumber'].toString();
-        String? formatedPhoneNumber = reformatPhoneNumber(phoneNumber!);
+        String? phoneNumber = snapshot.data?['phoneNumber'];
+        String? formatedPhoneNumber = phoneNumber != null ? reformatPhoneNumber(phoneNumber) : '';
         String? displayName = snapshot.data?['displayName'] ?? "Usuário";
         String? photoURL = snapshot.data?['photoURL'];
 
@@ -59,29 +72,8 @@ class ProfileModule extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.white,
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.blue,
-                      width: 3,
-                    ),
-                  ),
-                  child: CircleAvatar(
-                    radius: 46,
-                    backgroundImage: photoURL != null
-                        ? NetworkImage(photoURL)
-                        : const AssetImage("assets/images/default_profile.png")
-                            as ImageProvider,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+              ProfileImage(photoURL: photoURL),
+              SizedBox(height: 16),
               Text(
                 displayName,
                 style: const TextStyle(
@@ -97,7 +89,7 @@ class ProfileModule extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              ProfileSelection(phoneNumber: phoneNumber),
+              ProfileSelection(phoneNumber: phoneNumber ?? ""),
             ],
           ),
         );
