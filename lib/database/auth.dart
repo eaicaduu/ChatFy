@@ -1,7 +1,7 @@
 import 'package:chat/screens/start/start.dart';
 import 'package:flutter/material.dart';
 import 'package:chat/screens/menu.dart';
-import 'database.dart';
+import 'data/database.dart';
 
 class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});

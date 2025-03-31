@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../database/database.dart';
+import '../../database/data/database.dart';
 
 void signOut(BuildContext context, String phoneNumber) async {
   await DatabaseHelper().deleteSession(phoneNumber);

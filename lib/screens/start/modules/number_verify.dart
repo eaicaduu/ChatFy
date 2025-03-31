@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../../database/database.dart';
+import '../../../database/data/database.dart';
 
 String verificationId = '';
 int? resendToken;

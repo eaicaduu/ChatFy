@@ -1,12 +1,11 @@
 import 'package:chat/screens/start/data.dart';
 import 'package:chat/values/navigate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
-
-import '../../../database/database.dart';
+import '../../../database/data/database.dart';
+import '../../../database/firebase/device.dart';
 import '../../menu.dart';
 import '../confirm.dart';
 
@@ -49,6 +48,7 @@ class PhoneAuthService {
 Future<void> saveSession(String phoneNumber, BuildContext context) async {
   final DatabaseHelper databaseHelper = DatabaseHelper();
   final db = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser;
   final String deviceId = await getDeviceId();
 
   DocumentSnapshot sessionSnapshot = await db.collection('sessions').doc(phoneNumber).get();
@@ -81,18 +81,13 @@ Future<void> saveSession(String phoneNumber, BuildContext context) async {
     });
 
     await databaseHelper.saveSession(phoneNumber);
+    await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+      'userUID' : user?.uid,
+      'displayName': "Usuário",
+      'instagram': null,
+      'photoURL': null,
+      'phoneNumber': phoneNumber,
+    });
     navigateReplacement(context, DataScreen());
   }
-}
-
-Future<String> getDeviceId() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? deviceId = prefs.getString('deviceId');
-
-  if (deviceId == null) {
-    deviceId = Uuid().v4();
-    await prefs.setString('deviceId', deviceId);
-  }
-
-  return deviceId;
 }

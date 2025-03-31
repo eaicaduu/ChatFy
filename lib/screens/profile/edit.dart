@@ -1,3 +1,5 @@
+import 'package:chat/screens/profile/modules/edit_bar.dart';
+import 'package:chat/values/colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileEdit extends StatefulWidget {
@@ -26,27 +28,14 @@ class ProfileEditState extends State<ProfileEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 16.0),
-          child: Text(
-            "Editar Perfil",
-            style: TextStyle(fontSize: 22),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            icon: const Icon(Icons.close_rounded),
-            iconSize: 32,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: getBackgroundColor(context),
+      body: SafeArea(
+          child: Column(
+        children: [
+          EditBar(),
+        ],
+      )),
     );
   }
 }

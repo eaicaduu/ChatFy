@@ -14,6 +14,23 @@ class ProfileBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 
+void openProfileEdit(BuildContext context) {
+  showModalBottomSheet(
+    backgroundColor: getBackgroundColor(context),
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) => Container(
+      margin: const EdgeInsets.only(top: 16.0),
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: ProfileEdit(),
+    ),
+  );
+}
+
+
 class ProfileBarState extends State<ProfileBar> {
   @override
   Widget build(BuildContext context) {
@@ -23,21 +40,9 @@ class ProfileBarState extends State<ProfileBar> {
       title: const Text("Perfil"),
       actions: [
         IconButton(
-          icon: const Icon(Icons.edit),
+          icon: const Icon(Icons.edit_rounded),
           onPressed: () {
-            showModalBottomSheet(
-              backgroundColor: getBackgroundColor(context),
-              context: context,
-              isScrollControlled: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) => Container(
-                margin: const EdgeInsets.only(top: 16.0),
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: ProfileEdit(),
-              ),
-            );
+            openProfileEdit(context);
           },
         ),
       ],

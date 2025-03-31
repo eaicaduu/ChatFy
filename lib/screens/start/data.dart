@@ -36,24 +36,23 @@ class DataScreenState extends State<DataScreen> {
 
   Future<void> saveUserData() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
       try {
         String? photoUrl;
 
         if (imageFile != null) {
           final ref = FirebaseStorage.instance
               .ref()
-              .child('profile_pictures/${user.uid}.jpg');
+              .child('profile_pictures/${user?.uid}.jpg');
 
           await ref.putFile(File(imageFile!.path));
           photoUrl = await ref.getDownloadURL();
         }
 
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
           'displayName': nameController.text,
           'instagram': instagramController.text,
           'photoURL': photoUrl,
-          'phoneNumber': user.phoneNumber,
+          'phoneNumber': user?.phoneNumber,
         });
         if (mounted) {
           navigateReplacement(context, MenuScreen());
@@ -63,7 +62,6 @@ class DataScreenState extends State<DataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Erro ao salvar dados')),
           );
-        }
       }
     }
   }
