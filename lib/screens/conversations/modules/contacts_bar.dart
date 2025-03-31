@@ -20,7 +20,7 @@ class ContactsBar extends StatefulWidget {
 
 class ContactsBarState extends State<ContactsBar> {
   final FocusNode _focusNode = FocusNode();
-  bool showClearIcon = false;
+  bool showIcon = false;
 
   @override
   void initState() {
@@ -28,13 +28,15 @@ class ContactsBarState extends State<ContactsBar> {
 
     _focusNode.addListener(() {
       setState(() {
-        showClearIcon = _focusNode.hasFocus || widget.searchController.text.isNotEmpty;
+        showIcon =
+            _focusNode.hasFocus || widget.searchController.text.isNotEmpty;
       });
     });
 
     widget.searchController.addListener(() {
       setState(() {
-        showClearIcon = widget.searchController.text.isNotEmpty || _focusNode.hasFocus;
+        showIcon =
+            widget.searchController.text.isNotEmpty || _focusNode.hasFocus;
       });
     });
   }
@@ -51,54 +53,74 @@ class ContactsBarState extends State<ContactsBar> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "${widget.contactCountFilter} Contatos",
-                style: const TextStyle(fontSize: 22),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close_rounded),
-                iconSize: 32,
-                onPressed: () {
-                  Navigator.pop(context);
-                  FocusScope.of(context).unfocus();
-                },
-              ),
-            ],
+          child: AnimatedOpacity(
+            opacity: showIcon ? 0.0 : 1.0,
+            duration: const Duration(milliseconds: 200),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                widget.contactCountFilter == 0
+                    ? const Text(
+                        "Nenhum Contato",
+                        style: TextStyle(fontSize: 22),
+                      )
+                    : widget.contactCountFilter == 1
+                        ? const Text(
+                            "1 Contato",
+                            style: TextStyle(fontSize: 22),
+                          )
+                        : Text(
+                            "${widget.contactCountFilter} Contatos",
+                            style: const TextStyle(fontSize: 22),
+                          ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  iconSize: 32,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () {},
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: TextField(
-            controller: widget.searchController,
-            focusNode: _focusNode,
-            onChanged: widget.onSearchChanged,
-            decoration: InputDecoration(
-              hintText: "Pesquisar...",
-              prefixIcon: const Icon(Icons.search),
-              filled: true,
-              fillColor: Colors.grey.withValues(alpha: 0.2),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide: BorderSide.none,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeOut,
+            transform: showIcon
+                ? Matrix4.translationValues(0, -50, 0)
+                : Matrix4.translationValues(0, 0, 0),
+            child: TextField(
+              controller: widget.searchController,
+              focusNode: _focusNode,
+              onChanged: widget.onSearchChanged,
+              decoration: InputDecoration(
+                hintText: "Pesquisar...",
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.grey.withValues(alpha: 0.2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                suffixIcon: showIcon
+                    ? IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          widget.searchController.clear();
+                          FocusScope.of(context).unfocus();
+                          setState(() => showIcon = false);
+                        },
+                      )
+                    : null,
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-              suffixIcon: showClearIcon
-                  ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  widget.searchController.clear();
-                  FocusScope.of(context).unfocus();
-                  setState(() => showClearIcon = false);
-                },
-              )
-                  : null,
             ),
           ),
-        ),
+        )
       ],
     );
   }
