@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../values/colors.dart';
 import '../contacts.dart';
-import 'contacts_service.dart';
+import '../../../database/firebase/contacts_service.dart';
 
 class ConversationsBar extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -26,7 +26,6 @@ class ConversationsBarState extends State<ConversationsBar> {
   @override
   void initState() {
     super.initState();
-    fetchContacts();
 
     _focusNode.addListener(() {
       setState(() {
@@ -85,12 +84,8 @@ class ConversationsBarState extends State<ConversationsBar> {
       ),
       builder: (context) => Container(
         margin: const EdgeInsets.only(top: 16.0),
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: ContactsScreen(
-          contacts: contacts,
-          verifiedNumbers: verifiedNumbers,
-          isLoading: isLoading,
-        ),
+        height: MediaQuery.of(context).size.height * 0.9,
+        child: ContactsScreen(),
       ),
     );
   }
@@ -101,7 +96,7 @@ class ConversationsBarState extends State<ConversationsBar> {
       children: [
         AnimatedOpacity(
           opacity: showClearIcon ? 0.0 : 1.0,
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 100),
           child: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: getBackgroundColor(context),

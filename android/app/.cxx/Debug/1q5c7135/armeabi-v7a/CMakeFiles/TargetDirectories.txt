@@ -1,0 +1,2 @@
+C:/Users/Carolina/Downloads/chatfy/android/app/.cxx/Debug/1q5c7135/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Carolina/Downloads/chatfy/android/app/.cxx/Debug/1q5c7135/armeabi-v7a/CMakeFiles/rebuild_cache.dir

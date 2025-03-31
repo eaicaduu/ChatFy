@@ -2,19 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:chat/screens/conversations/modules/contacts_bar.dart';
 import 'package:chat/screens/conversations/modules/contacts_list.dart';
 import 'package:chat/screens/conversations/modules/contacts_selection.dart';
+import '../../database/firebase/contacts_service.dart';
 import '../../values/colors.dart';
 
 class ContactsScreen extends StatefulWidget {
-  final List<Map<String, String>> contacts;
-  final Map<String, bool> verifiedNumbers;
-  final bool isLoading;
-
-  const ContactsScreen({
-    super.key,
-    required this.contacts,
-    required this.verifiedNumbers,
-    required this.isLoading,
-  });
+  const ContactsScreen({super.key});
 
   @override
   ContactsScreenState createState() => ContactsScreenState();
@@ -22,6 +14,40 @@ class ContactsScreen extends StatefulWidget {
 
 class ContactsScreenState extends State<ContactsScreen> {
   final TextEditingController searchController = TextEditingController();
+  List<Map<String, String>> contacts = [];
+  Map<String, bool> verifiedNumbers = {};
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchContacts();
+  }
+
+  void fetchContacts() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    List<Map<String, String>> result = await ContactService.getContacts();
+
+    setState(() {
+      contacts = result;
+      isLoading = false;
+    });
+
+    for (var contact in result) {
+      checkNumberInFirebase(contact['number']!);
+    }
+  }
+
+  void checkNumberInFirebase(String phoneNumber) async {
+    bool isRegistered = await ContactService.checkNumberInFirebase(phoneNumber);
+
+    setState(() {
+      verifiedNumbers[phoneNumber] = isRegistered;
+    });
+  }
 
   void _filterContacts(String query) {
     setState(() {});
@@ -30,10 +56,13 @@ class ContactsScreenState extends State<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
     var displayedContacts = searchController.text.isEmpty
-        ? widget.contacts
-        : widget.contacts.where((contact) =>
-    contact['name']!.toLowerCase().contains(searchController.text.toLowerCase()) ||
-        contact['number']!.contains(searchController.text)).toList();
+        ? contacts
+        : contacts.where((contact) =>
+    contact['name']!
+        .toLowerCase()
+        .contains(searchController.text.toLowerCase()) ||
+        contact['number']!.contains(searchController.text))
+        .toList();
 
     displayedContacts.sort((a, b) => a['name']!.compareTo(b['name']!));
 
@@ -43,12 +72,12 @@ class ContactsScreenState extends State<ContactsScreen> {
         child: Column(
           children: [
             ContactsBar(
-              contactCount: widget.contacts.length,
+              contactCount: contacts.length,
               contactCountFilter: displayedContacts.length,
               searchController: searchController,
               onSearchChanged: _filterContacts,
             ),
-            const ContactsSelection(),
+            ContactsSelection(),
             Expanded(
               child: displayedContacts.isEmpty
                   ? const Center(
@@ -57,9 +86,21 @@ class ContactsScreenState extends State<ContactsScreen> {
                   style: TextStyle(fontSize: 18, color: Colors.grey),
                 ),
               )
-                  : ContactsList(
-                sortedContacts: displayedContacts,
-                verifiedNumbers: widget.verifiedNumbers,
+                  : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListView.builder(
+                  itemCount: displayedContacts.length,
+                  itemBuilder: (context, index) {
+                    final contact = displayedContacts[index];
+                    final phoneNumber = contact['number']!;
+                    final isRegistered = verifiedNumbers[phoneNumber] ?? false;
+
+                    return ContactsList(
+                      contact: contact,
+                      isRegistered: isRegistered,
+                    );
+                  },
+                ),
               ),
             ),
           ],
