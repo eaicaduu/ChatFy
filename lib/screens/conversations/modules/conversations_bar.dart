@@ -84,7 +84,7 @@ class ConversationsBarState extends State<ConversationsBar> {
       ),
       builder: (context) => Container(
         margin: const EdgeInsets.only(top: 16.0),
-        height: MediaQuery.of(context).size.height * 0.8,
+        height: MediaQuery.of(context).size.height * 0.9,
         child: ContactsScreen(),
       ),
     );
